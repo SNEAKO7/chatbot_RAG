@@ -1,4 +1,7 @@
-**Chatbot_RAG**
+> **Chatbot_RAG** - A local RAG chatbot using DeepSeek and llama.cpp for context-aware responses.
+
+
+***Chatbot_RAG***
 
 Chatbot_RAG is a local Retrieval-Augmented Generation (RAG) chatbot that leverages a DeepSeek language model to provide context-aware responses. By integrating a vector-based retrieval pipeline with the DeepSeek model, the chatbot is able to supplement its answers with information extracted from your custom documents (PDFs and TXT files). This project uses the llama-cpp-python bindings to run the DeepSeek model locally and employs FAISS along with LangChain for efficient similarity search.
 
