@@ -1,1 +1,3 @@
-kai earned 1 rupee in 2001
+version https://git-lfs.github.com/spec/v1
+oid sha256:dad46ab5ffea9d5b25250b1fbab914b1244e72bf76cf0d980ea89f856fb5a516
+size 26
