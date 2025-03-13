@@ -55,7 +55,7 @@ Retrieval-Augmented Generation (RAG) is a technique that enhances language model
 
 *DeepSeek Model*
 
-This project uses the deepseek-r1-distill-qwen-7b-q4_k_m.gguf model—a distilled variant of the DeepSeek language model. This model strikes a balance between performance and accuracy and is run locally via llama-cpp-python.
+This project uses the deepseek-r1-distill-qwen-7b-q4_k_m.gguf model—a distilled variant of the DeepSeek language model. This model strikes a balance between performance and accuracy and is run locally via llama-cpp-python.(you are free to use any model other than deepseek as well just download the model, a .gguf file from huugingface and place in inside the project folder in llama.cpp/models)
 
 
 **Project Structure**
