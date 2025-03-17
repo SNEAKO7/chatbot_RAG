@@ -254,9 +254,12 @@ Move it inside your project folder (chatbot_RAG): mv llama.cpp chatbot_RAG/
 Navigate into the llama.cpp folder and build it:  cd chatbot_RAG/llama.cpp
 
                                                   make
-**UPDATE-****FRONTEND****USING****FLASK**
+**UPDATE-** **FRONTEND** **USING** **FLASK**
+
 refer to -
+
 	   app.py(backend)
+    
 	   index.html(Frontend)	
                                                  
 
