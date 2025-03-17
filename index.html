@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cal - The Callippus Assistant</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #000000;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .chat-container {
+            width: 90vw;
+            max-width: 800px;
+            background: #1a1a1a;
+            box-shadow: 0px 0px 20px rgba(255, 0, 0, 0.5);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 2px solid #b30000;
+            animation: scaleIn 0.5s ease-out;
+        }
+
+        .chat-header {
+            background: linear-gradient(to right, #b30000, #660000);
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 24px;
+        }
+
+        .chat-box {
+            height: 70vh;
+            max-height: 500px;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            background: #1a1a1a;
+            scroll-behavior: smooth;
+        }
+
+        .chat-box::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .chat-box::-webkit-scrollbar-thumb {
+            background: #b30000;
+            border-radius: 5px;
+        }
+
+        .chat-box::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        .user-message, .bot-message {
+            max-width: 70%;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            word-wrap: break-word;
+            position: relative;
+            animation: messageEnter 1s ease-out; /* Updated duration to 1s */
+        }
+
+        .user-message {
+            background: #cccccc;
+            color: #000000;
+            align-self: flex-end;
+            border-top-right-radius: 0;
+        }
+
+        .user-message::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: -10px;
+            border-width: 10px 0 0 10px;
+            border-style: solid;
+            border-color: #cccccc transparent transparent transparent;
+        }
+
+        .bot-message {
+            background: #333333;
+            color: #ffffff;
+            align-self: flex-start;
+            border-top-left-radius: 0;
+        }
+
+        .bot-message::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -10px;
+            border-width: 10px 10px 0 0;
+            border-style: solid;
+            border-color: #333333 transparent transparent transparent;
+        }
+
+        .typing {
+            background: #333333;
+            color: #aaaaaa;
+            font-style: italic;
+            display: flex;
+            align-items: center;
+            animation: none;
+        }
+
+        .typing span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #aaaaaa;
+            border-radius: 50%;
+            margin: 0 2px;
+            animation: pulse 1.2s infinite;
+        }
+
+        .typing span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        .chat-input {
+            display: flex;
+            padding: 15px;
+            border-top: 2px solid #b30000;
+            background: #121212;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 5px;
+            outline: none;
+            font-size: 16px;
+            background: #222222;
+            color: #ffffff;
+            transition: box-shadow 0.3s;
+        }
+
+        .chat-input input:focus {
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+        }
+
+        .chat-input button {
+            margin-left: 15px;
+            background: #b30000;
+            color: #ffffff;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s, box-shadow 0.1s;
+        }
+
+        .chat-input button:hover {
+            background: #990000;
+        }
+
+        .chat-input button:active {
+            transform: scale(0.95);
+            background: #cc0000;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+        }
+
+        /* Animations */
+        @keyframes messageEnter {
+            from {
+                opacity: 0;
+                transform: translateY(30px); /* Increased from 20px */
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.8); /* Made more noticeable */
+            }
+            to {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 0.5;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
+        /* Respect reduced motion preference */
+        @media (prefers-reduced-motion: reduce) {
+            .user-message, .bot-message, .chat-container {
+                animation: none;
+            }
+            .chat-input button {
+                transition: none;
+            }
+            .typing span {
+                animation: none;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .chat-container {
+                width: 100vw;
+                border-radius: 0;
+            }
+            .chat-header {
+                font-size: 20px;
+                padding: 15px;
+            }
+            .chat-box {
+                height: 60vh;
+            }
+            .chat-input input {
+                padding: 10px;
+            }
+            .chat-input button {
+                padding: 10px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">Cal - The Callippus Assistant</div>
+        <div class="chat-box" id="chatbox">
+            <div class="bot-message">Cal: Hi! I'm Cal, the Callippus assistant. I help retrieve information from FRS and UAT documents.</div>
+        </div>
+        <div class="chat-input">
+            <input type="text" id="userInput" placeholder="Type your message..." onkeypress="handleKeyPress(event)">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        function sendMessage() {
+            let userInput = document.getElementById("userInput").value.trim();
+            if (userInput === "") return;
+
+            let chatbox = document.getElementById("chatbox");
+
+            // Add user message to chat
+            let userMessage = document.createElement("div");
+            userMessage.classList.add("user-message");
+            userMessage.innerText = "You: " + userInput;
+            chatbox.appendChild(userMessage);
+
+            // Add typing indicator
+            let typingIndicator = document.createElement("div");
+            typingIndicator.classList.add("bot-message", "typing");
+            typingIndicator.innerHTML = 'Cal is typing<span></span><span></span><span></span>';
+            chatbox.appendChild(typingIndicator);
+
+            // Scroll to bottom
+            chatbox.scrollTop = chatbox.scrollHeight;
+
+            // Send message to backend
+            fetch("/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: userInput })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Remove typing indicator
+                chatbox.removeChild(typingIndicator);
+
+                // Add bot message
+                let botMessage = document.createElement("div");
+                botMessage.classList.add("bot-message");
+                botMessage.innerText = "Cal: " + data.response;
+                chatbox.appendChild(botMessage);
+
+                // Scroll to bottom
+                chatbox.scrollTop = chatbox.scrollHeight;
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                // Remove typing indicator
+                chatbox.removeChild(typingIndicator);
+                // Add error message
+                let errorMessage = document.createElement("div");
+                errorMessage.classList.add("bot-message");
+                errorMessage.innerText = "Cal: Sorry, I encountered an error.";
+                chatbox.appendChild(errorMessage);
+                chatbox.scrollTop = chatbox.scrollHeight;
+            });
+
+            // Clear input field
+            document.getElementById("userInput").value = "";
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === "Enter") {
+                sendMessage();
+            }
+        }
+    </script>
+</body>
+</html>
