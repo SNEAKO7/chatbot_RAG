@@ -36,6 +36,7 @@ Chatbot_RAG is a local Retrieval-Augmented Generation (RAG) chatbot that leverag
 
 -Steps to Download and Set Up llama.cpp
 
+-Added frontend using Flask Framework (Update)
 
 **Features**
 
@@ -253,7 +254,10 @@ Move it inside your project folder (chatbot_RAG): mv llama.cpp chatbot_RAG/
 Navigate into the llama.cpp folder and build it:  cd chatbot_RAG/llama.cpp
 
                                                   make
-
+**UPDATE-****FRONTEND****USING****FLASK**
+refer to -
+	   app.py(backend)
+	   index.html(Frontend)	
                                                  
 
 
