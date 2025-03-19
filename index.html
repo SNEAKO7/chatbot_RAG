@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cal - The Callippus Assistant</title>
+    <title>Cal - AI Chatbot</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    
     <style>
         body {
             font-family: 'Roboto', sans-serif;
@@ -48,19 +49,6 @@
             scroll-behavior: smooth;
         }
 
-        .chat-box::-webkit-scrollbar {
-            width: 10px;
-        }
-
-        .chat-box::-webkit-scrollbar-thumb {
-            background: #b30000;
-            border-radius: 5px;
-        }
-
-        .chat-box::-webkit-scrollbar-track {
-            background: #1a1a1a;
-        }
-
         .user-message, .bot-message {
             max-width: 70%;
             padding: 15px;
@@ -68,24 +56,15 @@
             margin-bottom: 15px;
             word-wrap: break-word;
             position: relative;
-            animation: messageEnter 1s ease-out; /* Updated duration to 1s */
+            opacity: 0;
+            animation: fadeIn 0.5s ease-in forwards;
         }
 
         .user-message {
-            background: #cccccc;
-            color: #000000;
+            background: #b30000;
+            color: #ffffff;
             align-self: flex-end;
             border-top-right-radius: 0;
-        }
-
-        .user-message::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: -10px;
-            border-width: 10px 0 0 10px;
-            border-style: solid;
-            border-color: #cccccc transparent transparent transparent;
         }
 
         .bot-message {
@@ -95,23 +74,15 @@
             border-top-left-radius: 0;
         }
 
-        .bot-message::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -10px;
-            border-width: 10px 10px 0 0;
-            border-style: solid;
-            border-color: #333333 transparent transparent transparent;
-        }
-
         .typing {
             background: #333333;
             color: #aaaaaa;
             font-style: italic;
             display: flex;
             align-items: center;
-            animation: none;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
         }
 
         .typing span {
@@ -148,11 +119,6 @@
             font-size: 16px;
             background: #222222;
             color: #ffffff;
-            transition: box-shadow 0.3s;
-        }
-
-        .chat-input input:focus {
-            box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
         }
 
         .chat-input button {
@@ -163,37 +129,20 @@
             padding: 15px 30px;
             border-radius: 5px;
             cursor: pointer;
-            transition: background 0.2s, transform 0.1s, box-shadow 0.1s;
         }
 
         .chat-input button:hover {
             background: #990000;
         }
 
-        .chat-input button:active {
-            transform: scale(0.95);
-            background: #cc0000;
-            box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
-        }
-
-        /* Animations */
-        @keyframes messageEnter {
+        @keyframes fadeIn {
             from {
                 opacity: 0;
-                transform: translateY(30px); /* Increased from 20px */
+                transform: translateY(10px);
             }
             to {
                 opacity: 1;
                 transform: translateY(0);
-            }
-        }
-
-        @keyframes scaleIn {
-            from {
-                transform: scale(0.8); /* Made more noticeable */
-            }
-            to {
-                transform: scale(1);
             }
         }
 
@@ -203,39 +152,6 @@
             }
             50% {
                 opacity: 1;
-            }
-        }
-
-        /* Respect reduced motion preference */
-        @media (prefers-reduced-motion: reduce) {
-            .user-message, .bot-message, .chat-container {
-                animation: none;
-            }
-            .chat-input button {
-                transition: none;
-            }
-            .typing span {
-                animation: none;
-            }
-        }
-
-        @media (max-width: 600px) {
-            .chat-container {
-                width: 100vw;
-                border-radius: 0;
-            }
-            .chat-header {
-                font-size: 20px;
-                padding: 15px;
-            }
-            .chat-box {
-                height: 60vh;
-            }
-            .chat-input input {
-                padding: 10px;
-            }
-            .chat-input button {
-                padding: 10px 20px;
             }
         }
     </style>
@@ -271,39 +187,26 @@
             typingIndicator.innerHTML = 'Cal is typing<span></span><span></span><span></span>';
             chatbox.appendChild(typingIndicator);
 
-            // Scroll to bottom
             chatbox.scrollTop = chatbox.scrollHeight;
 
-            // Send message to backend
             fetch("/chat", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ message: userInput })
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Network response was not ok");
-                }
-                return response.json();
-            })
+            .then(response => response.json())
             .then(data => {
-                // Remove typing indicator
                 chatbox.removeChild(typingIndicator);
 
-                // Add bot message
                 let botMessage = document.createElement("div");
                 botMessage.classList.add("bot-message");
                 botMessage.innerText = "Cal: " + data.response;
                 chatbox.appendChild(botMessage);
 
-                // Scroll to bottom
                 chatbox.scrollTop = chatbox.scrollHeight;
             })
             .catch(error => {
-                console.error("Error:", error);
-                // Remove typing indicator
                 chatbox.removeChild(typingIndicator);
-                // Add error message
                 let errorMessage = document.createElement("div");
                 errorMessage.classList.add("bot-message");
                 errorMessage.innerText = "Cal: Sorry, I encountered an error.";
@@ -311,7 +214,6 @@
                 chatbox.scrollTop = chatbox.scrollHeight;
             });
 
-            // Clear input field
             document.getElementById("userInput").value = "";
         }
 
