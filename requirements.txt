@@ -1,3 +1,36 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:07ed86c8de8a2b759107f52e20fa23196152e7ad245c7439ac7db12765aabd1b
-size 2974
+Flask==3.1.0
+PyPDF2==3.0.1
+python-docx==1.1.2
+pytesseract==0.3.13
+pillow==11.1.0
+pandas==2.2.3
+openpyxl==3.1.5
+jsonpointer==3.0.0
+PyYAML==6.0.2
+python-dotenv==1.0.1
+
+# Langchain + Embeddings
+langchain==0.3.20
+langchain-community==0.3.19
+langchain-core==0.3.43
+langchain-huggingface==0.1.2
+langchain-text-splitters==0.3.6
+sentence-transformers==3.4.1
+faiss-cpu==1.10.0
+huggingface-hub==0.29.2
+
+# Vector + Embedding dependencies
+transformers==4.49.0
+tokenizers==0.21.0
+torch==2.6.0
+scikit-learn==1.6.1
+scipy==1.15.2
+numpy==2.2.3
+joblib==1.4.2
+threadpoolctl==3.5.0
+
+# Llama model
+llama-cpp-python==0.3.7
+
+# Optional: image OCR support
+tesseract
