@@ -66,7 +66,7 @@ chatbot_RAG/
 ├── rag.py             # Retrieval pipeline: extracts text from documents, builds FAISS index, and retrieves context
 ├── llama.cpp/         # Directory for the DeepSeek model and related files
 │   └── models/        # Contains the DeepSeek GGUF model file(s)
-├── data/              # Folder for PDFs and TXT files (your document data store)
+├── data/              # Folder for PDFs and TXT files (your document data store) --Updated for reading docx, images, whatsapp logs, xls, xlsx, json, png, jpeg, tiff, jpg.
 ├── venv/              # Virtual environment (should not be tracked in Git)
 ├── .gitignore         # Git ignore file to exclude unnecessary files (e.g., venv, large models)
 └── README.md          # This README file
