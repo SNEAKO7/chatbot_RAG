@@ -1,57 +1,60 @@
+import os
 from flask import Flask, render_template, request, jsonify
 from rag import retrieve_context
 from llama_cpp import Llama
-import os
 
-# Initialize Flask app
 app = Flask(__name__)
 
-# Model path
-model_path = r"D:\chatbot_RAG\llama.cpp\models\mistral-7b-instruct-v0.1-q4_k_m.gguf"
-
+model_path = "D:/chatbot_RAG/llama.cpp/models/mistral-7b-instruct-v0.1-q4_k_m.gguf"
+#model_path = "/app/model/mistral-7b-instruct-v0.1-q4_k_m.gguf"      #For docker
 if not os.path.exists(model_path):
-    raise FileNotFoundError(f"Model file not found at: {model_path}")
+    raise FileNotFoundError(f"Llama model file not found: {model_path}")
+llm = Llama(model_path=model_path, n_ctx=8192, n_batch=512, verbose=False)
 
-# Load Llama model
-llm = Llama(model_path=model_path, n_ctx=8192, verbose=False)
-
-# Document folder path
-docs_folder = r"D:\chatbot_RAG\data"
+docs_folder = "D:/chatbot_RAG/data"
+#docs_folder = "/app/data"
+chat_history = []
 
 @app.route("/")
-def home():
+def index():
     return render_template("index.html")
 
 @app.route("/chat", methods=["POST"])
 def chat():
     user_input = request.json.get("message", "").strip()
-    
     if not user_input:
         return jsonify({"response": "Please enter a message."})
 
-    # Retrieve context from documents
-    context = retrieve_context(user_input, docs_folder)
+    chat_history.append({"role": "user", "content": user_input})
 
-    # Constructing prompt for the model
-    prompt = f"""You are Cal, the Callippus assistant. Use the provided context to answer accurately.
-If context lacks details, say 'The context does not provide enough details.'
+    context_text, context_sources = retrieve_context(user_input, docs_folder)
+    history_text = "\n".join(
+        f"{m['role'].capitalize()}: {m['content']}" for m in chat_history[-4:]
+    )
 
-Context: {context}
+    if context_text:
+        prompt = (
+            f"You are Cal, the Callippus assistant. Use the following context to answer the user's question.\n\n"
+            f"Conversation history:\n{history_text}\n\n"
+            f"Context:\n{context_text}\n\nAnswer:"
+        )
+    else:
+        prompt = (
+            f"You are Cal, the Callippus assistant. No matching context was found.\n\n"
+            f"Conversation history:\n{history_text}\n\nAnswer:"
+        )
 
-User: {user_input}
-Cal:"""
+    res = llm(prompt, temperature=0, max_tokens=300)
+    answer = res["choices"][0]["text"].strip()
 
-    try:
-        response = llm(prompt, max_tokens=500)
-        answer = response["choices"][0]["text"].strip()
+    if context_sources:
+        sources = sorted(set(src for _, src in context_sources))
+        source_note = "\n\n📄 *Context found in:*\n" + "\n".join(f"- {src}" for src in sources)
+        answer += source_note
 
-        if not answer:
-            answer = "The context does not provide enough details."
-
-        return jsonify({"response": answer})
-
-    except Exception as e:
-        return jsonify({"response": "Sorry, I encountered an error processing your request."})
+    chat_history.append({"role": "assistant", "content": answer})
+    return jsonify({"response": answer})
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0", port=5000)
+
